@@ -1,0 +1,137 @@
+<HTML>
+<HEAD>
+<TITLE>Magic Mirror</TITLE>
+
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=MuseoModerno:wght@600&display=swap" rel="stylesheet">
+<style type="text/css">
+body {
+    background-color:black;
+    color: white;
+    font-family: 'MuseoModerno', cursive;
+}
+h1 {
+    font-size: 25px;
+}
+h2 {
+    font-size: 20px;
+}
+
+h3 {
+    font-size: 15px;
+}
+
+.parent{
+    position : relative;
+    text-align: center;
+}
+
+.spotify {
+    position: fixed;
+    bottom:0;
+    left: 0; /* set the right to 0 */
+    width: 20%;
+}
+
+.weather {
+    position: fixed;
+    top:0;
+    right: 0; /* set the right to 0 */
+    width: 25%;
+}
+
+.clock {
+    position: fixed;
+    top:0;
+    left: 0; /* set the right to 0 */
+    width: 25%;
+}
+
+
+
+</style>
+<script type="text/javascript"
+    src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+    $(document).ready(
+            function() {
+                setInterval(function() {
+                    var d = new Date();
+
+                    var month = d.getMonth()+1;
+                    var day = d.getDate();
+                    if(d.getMinutes() < 10){
+                        var minutes = '0'+d.getMinutes();
+                    }else{
+                        var minutes = d.getMinutes();
+                    }
+                    if(d.getHours() < 10){
+                        var hours = '0' + d.getHours();
+                    }else if(d.getHours() > 12){
+                        var hours = d.getHours()-12;
+                    }else{
+                        var hours = d.getHours()
+                    }
+
+                    var output = d.getFullYear() + '-' +
+                        (month<10 ? '0' : '') + month + '-' +
+                        (day<10 ? '0' : '') + day +"\n"+ d.getHours()+":"+minutes;
+
+                    $('#date').text(output);
+
+                    var song_data = $.getJSON('/spotify','',function(song_data){
+                    var track = song_data.track
+                    var album = song_data.album
+                    var artist = song_data.artist;
+                    var album_cover = song_data.albumcover;
+                    $('#track').text(track);
+                    $('#album').text(album);
+                    $('#artist').text(artist);
+                    $('#album_cover').attr("src", album_cover);
+                    });
+                    var song_data = $.getJSON('/weather','',function(song_data){
+                    var temp = song_data.temp
+                    var high = song_data.high
+                    var low = song_data.low;
+                    var url = song_data.url;
+                    var state = song_data.description;
+                    $('#temp').text(temp);
+                    $('#high').text(high);
+                    $('#low').text(low);
+                    $('#state').text(state);
+                    $('#weather').attr("src", url);
+                    });
+
+
+                }, 5000);
+            });
+</script>
+
+</HEAD>
+<div class = "parent">
+
+    <div class = "clock">
+        <h1 style = "font-size: 50";><a id="date"></a></h1>
+    </div>
+
+    <div class = "weather">
+       <br>
+        <br>
+        <h1 style = "font-size: 50";><a id="temp"></a>°</h1>
+        <img style = "margin-top: -50px; margin-bottom: -30px" id="weather" with = 200% src="">
+        <h2 style = "font-size: 30";> <a id="state"></a></h2>
+
+    </div>
+
+    <div class = "spotify">
+        <img  id="album_cover" width = 75% src="">
+        <h1><a id="track"></a></h1>
+        <h3><a id="album"></a></h3>
+        <h2><a id="artist"></a><br></h2>
+    </div>
+
+</div>
+
+</HTML>
